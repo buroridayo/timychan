@@ -7,12 +7,29 @@ type TimerSelectProps = {
   value: number;
   onchange: (val: number) => void;
   range: number;
+  resetTrigger: number;
 };
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TimerSelect = ({ label, value, onchange, range }: TimerSelectProps) => {
+const TimerSelect = ({
+  label,
+  value,
+  onchange,
+  range,
+  resetTrigger,
+}: TimerSelectProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const resetRef = useRef<HTMLSelectElement>(null);
+
+  useEffect(() => {
+    if (resetRef.current) {
+      resetRef.current.selectedIndex = 0;
+    }
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [resetTrigger]);
 
   useEffect(() => {
     gsap.to(scrollRef.current, {
@@ -27,15 +44,19 @@ const TimerSelect = ({ label, value, onchange, range }: TimerSelectProps) => {
     });
   }, []);
   return (
-    <div className="flex flex-col items-center" ref={scrollRef}>
-      <label className="mb-2 text-sm">
+    <div
+      className="flex flex-col items-center min-w-[100px] shrink-0"
+      ref={scrollRef}
+    >
+      <label className="mb-4 text-xl">
         {value}
         {label}
       </label>
       <select
+        ref={resetRef}
         value={value}
         onChange={(e) => onchange(Number(e.target.value))}
-        className="h-20 w-16 text-center bg-black text-white  overflow-y-scroll hidden-scrollbar"
+        className="h-60 w-24 text-center bg-black text-white overflow-y-scroll hidden-scrollbar outline-none text-2xl"
         size={5}
       >
         {Array.from({ length: range }, (_, i) => (

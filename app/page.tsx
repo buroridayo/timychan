@@ -6,8 +6,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white flex  flex-col justify-between">
-      <div className="m-5 text-black text-2xl flex justify-between items-center">
+    <main className="min-h-screen bg-black flex flex-col overflow-hidden">
+      <div className="m-5 text-white text-2xl flex justify-between items-center shrink-0">
         <h1>Timychan</h1>
         <Link href="/setting">
           <Image
@@ -19,9 +19,14 @@ export default function Home() {
           />
         </Link>
       </div>
-      <Second />
+      {/* local strage */}
+      <div className="flex-1 flex items-start justify-center shrink-0">
+        <Second />
+      </div>
 
-      <First />
+      <div className="shrink-0">
+        <First />
+      </div>
     </main>
   );
 }
