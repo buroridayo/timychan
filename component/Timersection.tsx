@@ -1,8 +1,16 @@
 "use client";
-import AddSelect from "@/utils/AddSelect";
-import Separator from "@/utils/Separator";
-import TimerSelect from "@/utils/TimerSelect";
-import { useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/utils/Sheetpaper";
+import TimeSlidebar from "@/utils/Sheetpaper/TimeSlidebar";
+import AddSelect from "@/utils/TagSheet/AddSelect";
+import Separator from "@/utils/TagSheet/Separator";
+import TimerSelect from "@/utils/TagSheet/TimerSelect";
+import { useState, useRef } from "react";
 import * as React from "react";
 import toast from "react-hot-toast";
 
@@ -12,6 +20,12 @@ const Timersection = () => {
   const [seconds, setSeconds] = useState(0);
   const [resetKey, setResetKey] = useState(0);
   const [addList, setAddList] = useState<string[]>([]);
+  const [category, setCategory] = useState<"Work" | "Break">("Work");
+
+  //category room
+  const handleCategoryChange = (value: "Work" | "Break") => {
+    setCategory(value);
+  };
 
   // reset
   const handleReset = () => {
@@ -27,7 +41,7 @@ const Timersection = () => {
       toast.error("0h0m0s cannot add");
       return;
     }
-    const totalTime = `${hours}h ${minutes}m ${seconds}s`;
+    const totalTime = `${category} ${hours}h ${minutes}m ${seconds}s`;
     setAddList((prev) => [...prev, totalTime]);
     toast.success(`Add: ${totalTime}`);
     console.log("selecttime", totalTime);
@@ -68,7 +82,27 @@ const Timersection = () => {
         </div>
 
         {/* Button (Reset/Add) */}
-        <div className="flex flex-col gap-2 sm:mt-1">
+        <div className="flex flex-row gap-2 sm:mt-1">
+          <button
+            onClick={() => handleCategoryChange("Work")}
+            className={`text-base sm:text-xl rounded-xl outline px-4 py-2 ${
+              category === "Work"
+                ? "bg-blue-400 text-white outline-white"
+                : "text-white outline-white"
+            }`}
+          >
+            Work
+          </button>
+          <button
+            onClick={() => handleCategoryChange("Break")}
+            className={`text-base sm:text-xl rounded-xl outline px-4 py-2 ${
+              category === "Break"
+                ? "bg-green-400 text-white outline-white"
+                : "text-white outline-white"
+            }`}
+          >
+            Break
+          </button>
           <button
             onClick={handleReset}
             className="text-white text-base sm:text-xl rounded-xl outline outline-white px-4 py-2 active:bg-cyan-500"
@@ -86,21 +120,39 @@ const Timersection = () => {
 
       <div className="mt-6 w-full max-h-[200px] overflow-y-auto hidden-scrollbar">
         <AddSelect className="w-full">
-          <div className="p-4 text-center">
-            <h4 className="mb-4 text-xl font-medium text-white">TimeList</h4>
+          <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-xl font-medium text-white">TimeList</h4>
+              <Sheet>
+                <SheetTrigger>
+                  <button className="text-white text-sm sm:text-base outline outline-white px-3 py-1 rouded-xl hover:bg-white hover:text-black transition">
+                    ALL
+                  </button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>All Time Records</SheetTitle>
+                    <TimeSlidebar
+                      addList={addList}
+                      handleDelete={handleDelete}
+                    />
+                  </SheetHeader>
+                </SheetContent>
+              </Sheet>
+            </div>
+
             {addList.map((list, index) => (
               <React.Fragment key={index}>
-                <div className="flex justify-between items-center text-lg text-white">
-                  <span>{list}</span>
+                <div className="relative w-full text-white text-lg py-1">
+                  <div className="text-center font-medium">{list}</div>
                   <span
                     onClick={() => handleDelete(index)}
-                    className="text-blue-400 hover:text-blue-900 cursor-pointer text-xl font-bold px-2"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-900 cursor-pointer text-xl font-bold px-3"
                     aria-label="Delete timer"
                   >
                     &minus;
                   </span>
                 </div>
-
                 <Separator className="my-2" />
               </React.Fragment>
             ))}
