@@ -1,8 +1,8 @@
 import First from "@/component/First";
-import Second from "@/component/Second";
 import { home4 } from "@/utils/Photo";
 import Image from "next/image";
 import Link from "next/link";
+import CirculartTimer from "@/component/CirculartTimer";
 
 export default function Home() {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
       </div>
       {/* local strage */}
       <div className="flex-1 flex items-start justify-center shrink-0">
-        <Second />
+        <CirculartTimer />
       </div>
 
       <div className="shrink-0">

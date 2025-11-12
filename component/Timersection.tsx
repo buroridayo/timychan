@@ -10,6 +10,7 @@ import TimeSlidebar from "@/utils/Sheetpaper/TimeSlidebar";
 import AddSelect from "@/utils/TagSheet/AddSelect";
 import Separator from "@/utils/TagSheet/Separator";
 import TimerSelect from "@/utils/TagSheet/TimerSelect";
+import { TimerStore } from "@/utils/TimerStore";
 import { useState, useRef } from "react";
 import * as React from "react";
 import toast from "react-hot-toast";
@@ -52,6 +53,13 @@ const Timersection = () => {
     const totalTime = `${hours}h ${minutes}m ${seconds}s`;
     setAddList((prev) => prev.filter((_, i) => i !== index));
     toast.success(`Delete:${totalTime}`);
+  };
+
+  //Passdate list
+  const handlePass = (index: number) => {
+    const totalTime = `${hours}h ${minutes}m ${seconds}s`;
+    TimerStore.getState().addTimer(totalTime);
+    toast.success(`Passdata:${totalTime}`);
   };
 
   return (
@@ -122,7 +130,7 @@ const Timersection = () => {
         <AddSelect className="w-full">
           <div className="p-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xl font-medium text-white">TimeList</h4>
+              <h4 className="text-xl font-medium text-white">TimeAdd</h4>
               <Sheet>
                 <SheetTrigger>
                   <button className="text-white text-sm sm:text-base outline outline-white px-3 py-1 rouded-xl hover:bg-white hover:text-black transition">
@@ -135,6 +143,7 @@ const Timersection = () => {
                     <TimeSlidebar
                       addList={addList}
                       handleDelete={handleDelete}
+                      handlePass={handlePass}
                     />
                   </SheetHeader>
                 </SheetContent>
@@ -146,8 +155,15 @@ const Timersection = () => {
                 <div className="relative w-full text-white text-lg py-1">
                   <div className="text-center font-medium">{list}</div>
                   <span
+                    onClick={() => handlePass(index)}
+                    className="absolute right-10 top-1/2 -translate-y-1/2 text-indigo-400 cursor-pointer text-xl font-bold px-3"
+                    aria-label="Pass timer"
+                  >
+                    &#43;
+                  </span>
+                  <span
                     onClick={() => handleDelete(index)}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-400 hover:text-blue-900 cursor-pointer text-xl font-bold px-3"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-400 cursor-pointer text-xl font-bold px-3"
                     aria-label="Delete timer"
                   >
                     &minus;
