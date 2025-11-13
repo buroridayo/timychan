@@ -20,7 +20,6 @@ export function Drawer({ children }: { children: React.ReactNode }) {
 
   const contextValue = useMemo(() => ({ open, setOpen }), [open]);
 
-  // any button
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -28,8 +27,6 @@ export function Drawer({ children }: { children: React.ReactNode }) {
         drawerRef.current &&
         !drawerRef.current.contains(e.target as Node)
       ) {
-      }
-      {
         setOpen(false);
       }
     };

@@ -11,17 +11,34 @@ import AddSelect from "@/utils/TagSheet/AddSelect";
 import Separator from "@/utils/TagSheet/Separator";
 import TimerSelect from "@/utils/TagSheet/TimerSelect";
 import { TimerStore } from "@/utils/TimerStore";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as React from "react";
 import toast from "react-hot-toast";
+import { TimerConfig } from "@/utils/TimerConfig";
+import { shallow } from "zustand/shallow";
 
 const Timersection = () => {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  const [resetKey, setResetKey] = useState(0);
-  const [addList, setAddList] = useState<string[]>([]);
-  const [category, setCategory] = useState<"Work" | "Break">("Work");
+  const {
+    addList,
+    setAddList,
+    deleteFromAddList,
+    category,
+    setCategory,
+    resetKey,
+    incrementResetKey,
+  } = TimerConfig((state) => ({
+    addList: state.addList,
+    setAddList: state.setAddList,
+    deleteFromAddList: state.deleteFromAddList,
+    category: state.category,
+    setCategory: state.setCategory,
+    resetKey: state.resetKey,
+    incrementResetKey: state.incrementResetKey,
+    // error update
+  }));
 
   //category room
   const handleCategoryChange = (value: "Work" | "Break") => {
@@ -33,7 +50,7 @@ const Timersection = () => {
     setHours(0);
     setMinutes(0);
     setSeconds(0);
-    setResetKey((prev) => prev + 1);
+    incrementResetKey();
   };
 
   // add
@@ -43,23 +60,23 @@ const Timersection = () => {
       return;
     }
     const totalTime = `${category} ${hours}h ${minutes}m ${seconds}s`;
-    setAddList((prev) => [...prev, totalTime]);
+    const updated = [...addList, totalTime];
+    setAddList(updated);
     toast.success(`Add: ${totalTime}`);
-    console.log("selecttime", totalTime);
   };
 
   //Delete list
   const handleDelete = (index: number) => {
-    const totalTime = `${hours}h ${minutes}m ${seconds}s`;
-    setAddList((prev) => prev.filter((_, i) => i !== index));
-    toast.success(`Delete:${totalTime}`);
+    const deletedTime = addList[index];
+    deleteFromAddList(index);
+    toast.success(`Delete: ${deletedTime}`);
   };
 
   //Passdate list
   const handlePass = (index: number) => {
-    const totalTime = `${hours}h ${minutes}m ${seconds}s`;
-    TimerStore.getState().addTimer(totalTime);
-    toast.success(`Passdata:${totalTime}`);
+    const passedTime = addList[index];
+    TimerStore.getState().addTimer(passedTime);
+    toast.success(`Passdata: ${passedTime}`);
   };
 
   return (

@@ -1,20 +1,40 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 //timer management
-type TimeState = {
-  selectedTimer: string[];
-  addTimer: (value: string) => void;
-  removeTimer: (index: number) => void;
-  clearTimers: () => void;
+type TimerItem = {
+  id: string;
+  label: string;
 };
 
-export const TimerStore = create<TimeState>((set) => ({
-  selectedTimer: [],
-  addTimer: (value) =>
-    set((state) => ({ selectedTimer: [...state.selectedTimer, value] })),
-  removeTimer: (index) =>
-    set((state) => ({
-      selectedTimer: state.selectedTimer.filter((_, i) => i !== index),
-    })),
-  clearTimers: () => set({ selectedTimer: [] }),
-}));
+type TimerState = {
+  selectedTimers: TimerItem[];
+  addList: string[];
+  addTimer: (label: string) => void;
+  removeTimer: (id: string) => void;
+  setAddList: (list: string[]) => void;
+};
+
+export const TimerStore = create<TimerState>()(
+  persist(
+    (set) => ({
+      selectedTimers: [],
+      addList: [],
+      addTimer: (label) =>
+        set((state) => ({
+          selectedTimers: [
+            ...state.selectedTimers,
+            { id: crypto.randomUUID(), label },
+          ],
+        })),
+      removeTimer: (id) =>
+        set((state) => ({
+          selectedTimers: state.selectedTimers.filter((item) => item.id !== id),
+        })),
+      setAddList: (list) => set({ addList: list }),
+    }),
+    {
+      name: "Timer-storage",
+    }
+  )
+);

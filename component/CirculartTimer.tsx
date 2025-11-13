@@ -10,6 +10,7 @@ import {
 } from "@/utils/Draweropen";
 import TimeDrawer from "@/utils/Draweropen/TimeDrawer";
 import { useState } from "react";
+import * as React from "react";
 
 const CirculartTimer = () => {
   //circle aria
