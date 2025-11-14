@@ -1,42 +1,38 @@
+import { StateCreator } from "zustand";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type TimerConfigState = {
-  addList: string[];
+export type TimerState = {
   category: "Work" | "Break";
   resetKey: number;
-  setAddList: (list: string[]) => void;
-  addToAddList: (item: string) => void;
-  deleteFromAddList: (index: number) => void;
-  setCategory: (value: "Work" | "Break") => void;
-  incrementResetKey: () => void;
+  selectedTimerString: string | null;
 };
 
+export type TimerAction = {
+  setCategory: (value: "Work" | "Break") => void;
+  incrementResetKey: () => void;
+  setSelectedTimerString: (timerString: string | null) => void;
+};
+
+export type TimerConfigState = TimerState & TimerAction;
+
+const timerConfigCreator: StateCreator<TimerConfigState> = (set, get) => ({
+  addList: [],
+  category: "Work",
+  resetKey: 0,
+  selectedTimerString: null,
+  setCategory: (value) => set({ category: value }),
+
+  incrementResetKey: () => set({ resetKey: get().resetKey + 1 }),
+
+  setSelectedTimerString: (timerString) =>
+    set({ selectedTimerString: timerString }),
+});
+
 export const TimerConfig = create<TimerConfigState>()(
-  persist(
-    (set, get) => ({
-      addList: [],
-      category: "Work",
-      resetKey: 0,
-
-      setAddList: (list) => set({ addList: list }),
-
-      addToAddList: (item) => set({ addList: [...get().addList, item] }),
-
-      deleteFromAddList: (index) => {
-        const current = get().addList;
-        if (index >= 0 && index < current.length) {
-          const updated = current.filter((_, i) => i !== index);
-          set({ addList: updated });
-        }
-      },
-
-      setCategory: (value) => set({ category: value }),
-
-      incrementResetKey: () => set({ resetKey: get().resetKey + 1 }),
-    }),
-    {
-      name: "timer-config-storage",
-    }
-  )
+  persist(timerConfigCreator, {
+    name: "timer-config-storage",
+  })
 );
+
+export const useTimerConfig = TimerConfig;

@@ -31,33 +31,46 @@ const CirculartTimer = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 shrink-0 mt-20 sm:mt-20">
-      <svg height={radius * 2} width={radius * 2}>
-        <circle
-          stroke="#2e2e2e"
-          fill="transparent"
-          strokeWidth={stroke}
-          r={normalRadius}
-          cx={radius}
-          cy={radius}
-        />
-        <circle
-          stroke="url(#gradient)"
-          fill="transparent"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={circulaference}
-          strokeDashoffset={circulaference * (1 - progress)}
-          r={normalRadius}
-          cx={radius}
-          cy={radius}
-        />
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#7f5af0" />
-            <stop offset="100%" stopColor="#d8b4fe" />
-          </linearGradient>
-        </defs>
-      </svg>
+      <div className="relative flex items-center justify-center">
+        {/* circle aria */}
+        <svg height={radius * 2} width={radius * 2}>
+          <circle
+            stroke="#2e2e2e"
+            fill="transparent"
+            strokeWidth={stroke}
+            r={normalRadius}
+            cx={radius}
+            cy={radius}
+          />
+          <circle
+            stroke="url(#gradient)"
+            fill="transparent"
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={circulaference}
+            strokeDashoffset={circulaference * (1 - progress)}
+            r={normalRadius}
+            cx={radius}
+            cy={radius}
+          />
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#7f5af0" />
+              <stop offset="100%" stopColor="#d8b4fe" />
+            </linearGradient>
+          </defs>
+        </svg>
+        {/* time aria */}
+        <div
+          className="absolute inset-0 flex items-center justify-center text-white text-5xl sm:text-5xl font-bold"
+          style={{
+            width: `${radius * 2}px`,
+            height: `${radius * 2}px`,
+          }}
+        >
+          <span>Timer</span>
+        </div>
+      </div>
 
       {/* button aria */}
       <div className="flex gap-6 mt-3">

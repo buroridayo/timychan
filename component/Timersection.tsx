@@ -14,31 +14,39 @@ import { TimerStore } from "@/utils/TimerStore";
 import { useState, useRef, useEffect } from "react";
 import * as React from "react";
 import toast from "react-hot-toast";
-import { TimerConfig } from "@/utils/TimerConfig";
-import { shallow } from "zustand/shallow";
+import { TimerConfig, TimerConfigState } from "@/utils/TimerConfig";
+import { useShallow } from "zustand/shallow";
 
 const Timersection = () => {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
+
   const {
-    addList,
-    setAddList,
-    deleteFromAddList,
     category,
     setCategory,
     resetKey,
     incrementResetKey,
-  } = TimerConfig((state) => ({
-    addList: state.addList,
-    setAddList: state.setAddList,
-    deleteFromAddList: state.deleteFromAddList,
-    category: state.category,
-    setCategory: state.setCategory,
-    resetKey: state.resetKey,
-    incrementResetKey: state.incrementResetKey,
-    // error update
-  }));
+    selectedTimerString,
+    setSelectedTimerString,
+  } = TimerConfig<TimerConfigState>(
+    useShallow((state) => ({
+      category: state.category,
+      setCategory: state.setCategory,
+      resetKey: state.resetKey,
+      incrementResetKey: state.incrementResetKey,
+      selectedTimerString: state.selectedTimerString,
+      setSelectedTimerString: state.setSelectedTimerString,
+    }))
+  );
+
+  const { addList, removeSavedTimer, addSavedTimer } = TimerStore(
+    useShallow((state) => ({
+      addList: state.addList,
+      removeSavedTimer: state.removeSavedTimer,
+      addSavedTimer: state.addSavedTimer,
+    }))
+  );
 
   //category room
   const handleCategoryChange = (value: "Work" | "Break") => {
@@ -60,23 +68,22 @@ const Timersection = () => {
       return;
     }
     const totalTime = `${category} ${hours}h ${minutes}m ${seconds}s`;
-    const updated = [...addList, totalTime];
-    setAddList(updated);
+    addSavedTimer(totalTime);
     toast.success(`Add: ${totalTime}`);
   };
 
   //Delete list
   const handleDelete = (index: number) => {
     const deletedTime = addList[index];
-    deleteFromAddList(index);
-    toast.success(`Delete: ${deletedTime}`);
+    removeSavedTimer(index);
+    toast.success(`Delete:${deletedTime}`);
   };
 
   //Passdate list
   const handlePass = (index: number) => {
     const passedTime = addList[index];
     TimerStore.getState().addTimer(passedTime);
-    toast.success(`Passdata: ${passedTime}`);
+    toast.success(`Passdate:(${passedTime}`);
   };
 
   return (
